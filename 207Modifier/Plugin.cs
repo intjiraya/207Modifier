@@ -19,12 +19,14 @@ namespace _207Modifier
         public override void OnEnabled()
         {
             Exiled.Events.Handlers.Player.Hurting += OnHurting;
+            Exiled.Events.Handlers.Player.ReceivingEffect += OnReceivingEffect;
             base.OnEnabled();
         }
 
         public override void OnDisabled()
         {
             Exiled.Events.Handlers.Player.Hurting -= OnHurting;
+            Exiled.Events.Handlers.Player.ReceivingEffect -= OnReceivingEffect;
             base.OnDisabled();
         }
 
@@ -32,11 +34,19 @@ namespace _207Modifier
         {
             if (ev.DamageHandler.Type != DamageType.Scp207 || !Config.CustomDamage) return;
             var scp207EffectsCount = ev.Player.ActiveEffects.Count(effect => effect.GetEffectType() == EffectType.Scp207);
-
             if (scp207EffectsCount > 0)
             {
                 ev.Amount = Config.Damage * scp207EffectsCount;
             }
+        }
+
+        private void OnReceivingEffect(ReceivingEffectEventArgs ev)
+        {
+            if (ev.Effect.GetEffectType() == EffectType.Scp207 && Config.CustomDuration)
+            {
+                ev.Duration = Config.Duration;
+            }
+
         }
     }
 }
